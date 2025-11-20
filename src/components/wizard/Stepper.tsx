@@ -8,26 +8,46 @@ interface StepperProps {
 }
 
 export function Stepper({ steps, currentStep }: StepperProps) {
+  const currentIndex = steps.indexOf(currentStep);
+
   return (
     <div className={styles.stepper}>
       {steps.map((step, index) => {
-        const isActive = step === currentStep;
-        const isCompleted = steps.indexOf(currentStep) > index;
+        const isCurrent = index === currentIndex;
+        const isCompleted = index < currentIndex;
+        const isFuture = index > currentIndex;
+        const isLast = index === steps.length - 1;
+
+        const showEllipsis = isFuture && isLast;
 
         return (
-          <div key={step} className={styles.step}>
-            <div
-              className={
-                isActive
-                  ? styles.circleActive
-                  : isCompleted
-                    ? styles.circleCompleted
-                    : styles.circle
-              }
-            >
-              {index + 1}
+          <div key={step} className={styles.stepWrapper}>
+            <div className={styles.step}>
+              <div
+                className={[
+                  styles.circle,
+                  isCurrent ? styles.circleActive : '',
+                  isCompleted ? styles.circleCompleted : '',
+                  isFuture && !isCurrent ? styles.circleFuture : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+              >
+                {showEllipsis ? '...' : index + 1}
+              </div>
+
+              <div className={styles.label}>
+                {showEllipsis ? '...' : STEP_LABELS[step]}
+              </div>
             </div>
-            <div className={styles.label}>{STEP_LABELS[step]}</div>
+
+            {index < steps.length - 1 && (
+              <div
+                className={[styles.line, index < currentIndex ? styles.lineCompleted : '']
+                  .filter(Boolean)
+                  .join(' ')}
+              />
+            )}
           </div>
         );
       })}

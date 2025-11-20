@@ -16,6 +16,8 @@ export function InfoStep() {
   };
 
   const descriptionRequired = requiresExtraInfo(state);
+  const firstNameMissing = state.info.firstName.trim().length === 0;
+  const lastNameMissing = state.info.lastName.trim().length === 0;
   const descriptionMissing =
     descriptionRequired && state.info.description.trim().length === 0;
 
@@ -26,6 +28,8 @@ export function InfoStep() {
         value={state.info.firstName}
         placeholder="First name"
         onChange={handleChange('firstName')}
+        required
+        error={firstNameMissing ? 'First name is required.' : undefined}
       />
 
       <FormField
@@ -33,6 +37,8 @@ export function InfoStep() {
         value={state.info.lastName}
         placeholder="Last name"
         onChange={handleChange('lastName')}
+        required
+        error={lastNameMissing ? 'Last name is required.' : undefined}
       />
 
       <FormField
@@ -77,13 +83,13 @@ export function InfoStep() {
         value={state.info.description}
         placeholder="Type the description..."
         onChange={handleChange('description')}
-        aria-invalid={descriptionMissing}
+        required={descriptionRequired}
+        error={
+          descriptionMissing
+            ? 'Description is required for the selected plan.'
+            : undefined
+        }
       />
-      {descriptionMissing && (
-        <div role="alert" style={{ color: 'var(--danger, #c93838)', marginTop: 8 }}>
-          Description is required for the selected plan.
-        </div>
-      )}
     </div>
   );
 }

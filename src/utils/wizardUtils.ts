@@ -31,11 +31,14 @@ export function isNextDisabled(state: WizardState): boolean {
       return state.newPlan.name.trim().length === 0;
 
     case 'info': {
-      // Only require description when flagged; do NOT require first name anymore.
+      const firstNameMissing = state.info.firstName.trim().length === 0;
+      const lastNameMissing = state.info.lastName.trim().length === 0;
+
       const descriptionRequired = requiresExtraInfo(state);
-      const descriptionOk =
-        !descriptionRequired || state.info.description.trim().length > 0;
-      return !descriptionOk;
+      const descriptionMissing =
+        descriptionRequired && state.info.description.trim().length === 0;
+
+      return firstNameMissing || lastNameMissing || descriptionMissing;
     }
 
     default:

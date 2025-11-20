@@ -7,6 +7,8 @@ interface FormFieldProps {
   value: string | number;
   placeholder?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  error?: string;
+  required?: boolean;
 }
 
 export function FormField({
@@ -15,18 +17,25 @@ export function FormField({
   value,
   placeholder,
   onChange,
+  error,
+  required,
 }: FormFieldProps) {
   return (
     <div className={styles.field}>
       <label className={styles.label}>
-        {label}
+        <div className={styles.labelRow}>
+          <span>{label}</span>
+        </div>
+
         <input
           type={type}
           value={value}
           onChange={onChange}
-          className={styles.input}
+          className={`${styles.input} ${error ? styles.inputError : ''}`}
           placeholder={placeholder}
+          aria-invalid={Boolean(error)}
         />
+        <div>{error && required && <span className={styles.error}>* {error}</span>}</div>
       </label>
     </div>
   );
