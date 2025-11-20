@@ -1,3 +1,4 @@
+import type { ChangeEvent } from 'react';
 import { useWizard } from '../../../context/WizardContext';
 import { FormField } from '../../ui/FormField';
 import { FormTextArea } from '../../ui/FormTextArea';
@@ -7,13 +8,15 @@ import { requiresExtraInfo } from '../../../utils/wizardUtils';
 export function InfoStep() {
   const { state, dispatch } = useWizard();
 
-  const handleChange = (field: keyof typeof state.info) => (e: any) => {
-    dispatch({
-      type: 'SET_INFO_FIELD',
-      field,
-      value: e.target.value,
-    });
-  };
+  const handleChange =
+    (field: keyof typeof state.info) =>
+    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      dispatch({
+        type: 'SET_INFO_FIELD',
+        field,
+        value: e.target.value,
+      });
+    };
 
   const descriptionRequired = requiresExtraInfo(state);
   const firstNameMissing = state.info.firstName.trim().length === 0;

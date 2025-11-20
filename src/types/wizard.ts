@@ -24,7 +24,7 @@ export interface NewPlanDraft {
 export interface InfoFormState {
   firstName: string;
   lastName: string;
-  age: number;
+  age: string;
   email: string;
   startDate: string;
   location: string;
@@ -52,7 +52,7 @@ export const initialWizardState: WizardState = {
   info: {
     firstName: '',
     lastName: '',
-    age: 0,
+    age: '',
     email: '',
     startDate: '',
     location: '',
