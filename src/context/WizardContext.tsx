@@ -25,7 +25,7 @@ const initialState: WizardState = {
   info: {
     firstName: '',
     lastName: '',
-    age: 0,
+    age: '',
     email: '',
     startDate: '',
     location: '',

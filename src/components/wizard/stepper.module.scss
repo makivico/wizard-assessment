@@ -1,3 +1,5 @@
+@use '../../styles/colors' as *;
+
 .stepper {
   display: flex;
   align-items: center;
@@ -20,9 +22,9 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 2px solid #d5d9e0;
-  background: #f7f9fc;
-  color: #7a7f87;
+  border: 2px solid $gray-400;
+  background: $gray-50;
+  color: $gray-500;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -30,15 +32,15 @@
 }
 
 .circleActive {
-  border-color: #2c3545;
-  color: #2c3545;
-  background: #ffffff;
+  border-color: $gray-700;
+  color: $gray-700;
+  background: $white;
 }
 
 .circleCompleted {
-  border-color: #2c3545;
-  background: #2c3545;
-  color: #ffffff;
+  border-color: $gray-700;
+  background: $gray-700;
+  color: $white;
 }
 
 .circleFuture {
@@ -47,17 +49,17 @@
 
 .label {
   font-size: 12px;
-  color: #2c3545;
+  color: $gray-700;
   text-align: center;
 }
 
 .line {
   flex: 1;
   height: 2px;
-  background-color: #d5d9e0;
+  background-color: $gray-400;
   margin: 0 12px;
 }
 
 .lineCompleted {
-  background-color: #2c3545;
+  background-color: $gray-700;
 }
