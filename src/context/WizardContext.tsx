@@ -37,19 +37,38 @@ const initialState: WizardState = {
 function wizardReducer(state: WizardState, action: WizardAction): WizardState {
   switch (action.type) {
     case 'SET_ACCOUNT_TYPE':
+      // only clear plan/info when the account actually changes
+      if (action.id === state.selectedAccountTypeId) {
+        return {
+          ...state,
+          selectedAccountTypeId: action.id,
+          isAddingNewPlan: false,
+          newPlan: initialNewPlan,
+        };
+      }
       return {
         ...state,
         selectedAccountTypeId: action.id,
         selectedPlanId: null,
         isAddingNewPlan: false,
         newPlan: initialNewPlan,
+        info: initialState.info,
       };
     case 'SET_PLAN':
+      if (action.id === state.selectedPlanId) {
+        return {
+          ...state,
+          selectedPlanId: action.id,
+          isAddingNewPlan: false,
+          newPlan: initialNewPlan,
+        };
+      }
       return {
         ...state,
         selectedPlanId: action.id,
         isAddingNewPlan: false,
         newPlan: initialNewPlan,
+        info: initialState.info,
       };
     case 'START_ADD_NEW_PLAN':
       return {
@@ -57,6 +76,7 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
         selectedPlanId: null,
         isAddingNewPlan: true,
         newPlan: initialNewPlan,
+        info: initialState.info,
       };
     case 'UPDATE_NEW_PLAN':
       return {

@@ -47,7 +47,7 @@ export function StepContainer({
         )}
 
         {isLastStep && onComplete && (
-          <Button variant="primary" onClick={onComplete}>
+          <Button variant="primary" onClick={onComplete} disabled={isNextDisabled}>
             Complete
           </Button>
         )}

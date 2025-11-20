@@ -1,9 +1,19 @@
+import { useEffect } from 'react';
+import { getSelectedAccount } from '../../../utils/wizardUtils';
 import { useWizard } from '../../../context/WizardContext';
 import { Button } from '../../ui/Button';
 import styles from './PlanStep.module.scss';
 
 export function PlanStep() {
   const { state, dispatch } = useWizard();
+
+  useEffect(() => {
+    const acct = getSelectedAccount(state);
+    const valid = acct?.plan.some(p => p.id === state.selectedPlanId);
+    if (!valid && state.selectedPlanId !== null) {
+      dispatch({ type: 'SET_ACCOUNT_TYPE', id: state.selectedAccountTypeId! });
+    }
+  }, [state.selectedAccountTypeId]);
 
   const selectedAccount = state.accountTypes.find(
     acc => acc.id === state.selectedAccountTypeId
@@ -13,9 +23,7 @@ export function PlanStep() {
     return <p>Please select an account type first.</p>;
   }
 
-  const handleSelectPlan = (planId: number) => {
-    dispatch({ type: 'SET_PLAN', id: planId });
-  };
+  const selectPlan = (id: number) => () => dispatch({ type: 'SET_PLAN', id: Number(id) });
 
   const handleAddNew = () => {
     dispatch({ type: 'START_ADD_NEW_PLAN' });
@@ -32,7 +40,7 @@ export function PlanStep() {
                 ? 'primary'
                 : 'secondary'
             }
-            onClick={() => handleSelectPlan(plan.id)}
+            onClick={selectPlan(plan.id)}
           >
             {plan.name}
           </Button>

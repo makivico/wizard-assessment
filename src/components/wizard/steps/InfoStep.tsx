@@ -2,6 +2,7 @@ import { useWizard } from '../../../context/WizardContext';
 import { FormField } from '../../ui/FormField';
 import { FormTextArea } from '../../ui/FormTextArea';
 import styles from './InfoStep.module.scss';
+import { requiresExtraInfo } from '../../../utils/wizardUtils';
 
 export function InfoStep() {
   const { state, dispatch } = useWizard();
@@ -13,6 +14,10 @@ export function InfoStep() {
       value: e.target.value,
     });
   };
+
+  const descriptionRequired = requiresExtraInfo(state);
+  const descriptionMissing =
+    descriptionRequired && state.info.description.trim().length === 0;
 
   return (
     <div className={styles.container}>
@@ -72,7 +77,13 @@ export function InfoStep() {
         value={state.info.description}
         placeholder="Type the description..."
         onChange={handleChange('description')}
+        aria-invalid={descriptionMissing}
       />
+      {descriptionMissing && (
+        <div role="alert" style={{ color: 'var(--danger, #c93838)', marginTop: 8 }}>
+          Description is required for the selected plan.
+        </div>
+      )}
     </div>
   );
 }

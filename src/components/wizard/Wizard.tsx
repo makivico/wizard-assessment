@@ -6,83 +6,46 @@ import { AccountStep } from './steps/AccountStep';
 import { PlanStep } from './steps/PlanStep';
 import { AddPlanStep } from './steps/AddPlanStep';
 import { InfoStep } from './steps/InfoStep';
-import { BASE_STEPS, STEPS_WITH_ADD_PLAN, STEP_CONFIG } from '../../config/wizardSteps';
+import { STEP_CONFIG } from '../../config/wizardSteps';
 import { StepContainer } from './StepContainer';
 import { SuccessScreen } from './SuccessScreen';
 import styles from './wizard.module.scss';
+import {
+  getSteps,
+  isNextDisabled as computeIsNextDisabled,
+  getNextStep,
+  getPrevStep,
+} from '../../utils/wizardUtils';
 
 export function Wizard() {
   const { state, dispatch } = useWizard();
   const [isCompleted, setIsCompleted] = useState(false);
 
-  const steps: StepId[] = state.isAddingNewPlan ? STEPS_WITH_ADD_PLAN : BASE_STEPS;
-
+  const steps: StepId[] = getSteps(state);
   const stepConfig = STEP_CONFIG[state.step];
   const isLastStep = state.step === 'info';
+  const isNextDisabled = computeIsNextDisabled(state);
 
-  const isNextDisabled = (() => {
-    switch (state.step) {
-      case 'account':
-        return state.selectedAccountTypeId === null;
-
-      case 'plan':
-        // If user is adding new plan, Next goes to addPlan, no existing plan required
-        return !state.isAddingNewPlan && state.selectedPlanId === null;
-
-      case 'addPlan':
-        // Require new plan name
-        return state.newPlan.name.trim().length === 0;
-
-      case 'info': {
-        const firstNameOk = state.info.firstName.trim().length > 0;
-
-        const selectedAccount = state.accountTypes.find(
-          a => a.id === state.selectedAccountTypeId
-        );
-
-        const selectedPlan = selectedAccount?.plan.find(
-          p => p.id === state.selectedPlanId
-        );
-
-        const descriptionRequired =
-          selectedPlan?.isExtraInfoRequired || state.newPlan.isExtraInfoRequired;
-
-        const descriptionOk = !descriptionRequired
-          ? true
-          : state.info.description.trim().length > 0;
-
-        return !(firstNameOk && descriptionOk);
-      }
-
-      default:
-        return false;
-    }
-  })();
-
-  // Navigation handlers
   const goToNext = () => {
-    const currentIndex = steps.indexOf(state.step);
-    if (currentIndex === -1 || currentIndex === steps.length - 1) return;
-    const nextStep = steps[currentIndex + 1];
-    dispatch({ type: 'GO_TO_STEP', step: nextStep });
+    const next = getNextStep(state.step, steps);
+    if (!next) return;
+    dispatch({ type: 'GO_TO_STEP', step: next });
   };
 
   const goToPrev = () => {
-    const currentIndex = steps.indexOf(state.step);
-    if (currentIndex <= 0) return;
-    const prevStep = steps[currentIndex - 1];
-    dispatch({ type: 'GO_TO_STEP', step: prevStep });
+    const prev = getPrevStep(state.step, steps);
+    if (!prev) return;
+    dispatch({ type: 'GO_TO_STEP', step: prev });
   };
 
   const handleComplete = () => {
-    // Simulate submission
     console.log('Submitting wizard payload:', state);
-    setIsCompleted(true); // show success screen
+    setIsCompleted(true);
   };
 
   const handleRestart = () => {
-    dispatch({ type: 'RESET' }); // reset reducer state
-    setIsCompleted(false); // show wizard again
+    dispatch({ type: 'RESET' });
+    setIsCompleted(false);
   };
 
   const renderStep = (step: StepId) => {
@@ -119,7 +82,7 @@ export function Wizard() {
           onBack={goToPrev}
           onComplete={handleComplete}
           isLastStep={isLastStep}
-          showBack={true}
+          showBack
           isBackDisabled={state.step === 'account'}
           isNextDisabled={isNextDisabled}
         >
