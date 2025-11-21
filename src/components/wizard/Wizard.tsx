@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useWizard } from '../../context/WizardContext';
 import type { StepId } from '../../types/wizard';
 import { Stepper } from './Stepper';
@@ -20,34 +20,57 @@ import {
 export function Wizard() {
   const { state, dispatch } = useWizard();
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const steps: StepId[] = getSteps(state);
-  const stepConfig = STEP_CONFIG[state.step];
+  const steps: StepId[] = useMemo(() => getSteps(state), [state]);
+
+  const stepConfig = useMemo(() => STEP_CONFIG[state.step], [state]);
   const isLastStep = state.step === 'info';
-  const isNextDisabled = computeIsNextDisabled(state);
+  const isNextDisabled = useMemo(() => computeIsNextDisabled(state), [state]);
 
-  const goToNext = () => {
+  // Move to next step
+  const goToNext = useCallback(() => {
     const next = getNextStep(state.step, steps);
     if (!next) return;
     dispatch({ type: 'GO_TO_STEP', step: next });
-  };
+  }, [state.step, steps, dispatch]);
 
-  const goToPrev = () => {
+  // Move to previous step
+  const goToPrev = useCallback(() => {
     const prev = getPrevStep(state.step, steps);
     if (!prev) return;
     dispatch({ type: 'GO_TO_STEP', step: prev });
+  }, [state, steps, dispatch]);
+
+  // Final submit
+  const handleComplete = async () => {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      // simulated API call (fake fetch)
+      await new Promise<void>((resolve, reject) => {
+        setTimeout(() => {
+          if (Math.random() > 0.95) reject(new Error('Network error'));
+          else resolve();
+        }, 800);
+      });
+      console.log('Submitting wizard payload:', state);
+      setIsCompleted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Submission failed');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleComplete = () => {
-    console.log('Submitting wizard payload:', state);
-    setIsCompleted(true);
-  };
-
+  // Restart wizard
   const handleRestart = () => {
     dispatch({ type: 'RESET' });
     setIsCompleted(false);
   };
 
+  // Render the current step component
   const renderStep = (step: StepId) => {
     switch (step) {
       case 'account':
@@ -63,6 +86,7 @@ export function Wizard() {
     }
   };
 
+  // Show success screen after completion
   if (isCompleted) {
     return (
       <div className={styles.wizard}>
@@ -71,9 +95,11 @@ export function Wizard() {
     );
   }
 
+  // Main wizard UI
   return (
     <div className={styles.wizard}>
       <Stepper steps={steps} currentStep={state.step} />
+      {error && <div className={styles.error}>{error}</div>}
 
       <div className={styles.wizard__content}>
         <StepContainer
@@ -84,7 +110,7 @@ export function Wizard() {
           isLastStep={isLastStep}
           showBack
           isBackDisabled={state.step === 'account'}
-          isNextDisabled={isNextDisabled}
+          isNextDisabled={isNextDisabled || isSubmitting}
         >
           {renderStep(state.step)}
         </StepContainer>

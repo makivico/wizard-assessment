@@ -1,11 +1,14 @@
 import { useWizard } from '../../../context/WizardContext';
 import { FormField } from '../../ui/FormField';
+import type { NewPlanDraft } from '../../../types/wizard';
 import styles from './AddPlanStep.module.scss';
 
+// Step for adding a new plan:
 export function AddPlanStep() {
   const { state, dispatch } = useWizard();
 
-  const update = (payload: any) => dispatch({ type: 'UPDATE_NEW_PLAN', payload });
+  const update = (payload: Partial<NewPlanDraft>) =>
+    dispatch({ type: 'UPDATE_NEW_PLAN', payload });
 
   return (
     <div className={styles.container}>
@@ -15,7 +18,7 @@ export function AddPlanStep() {
         placeholder="Enter plan name"
         onChange={e => update({ name: e.target.value })}
       />
-
+      {/* Checkbox for requiring description */}
       <label className={styles.checkbox}>
         <input
           type="checkbox"

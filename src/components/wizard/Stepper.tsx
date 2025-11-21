@@ -18,6 +18,7 @@ export function Stepper({ steps, currentStep }: StepperProps) {
         const isFuture = index > currentIndex;
         const isLast = index === steps.length - 1;
 
+        // Show ellipsis in the last circle if it's a future step
         const showEllipsis = isFuture && isLast;
 
         return (
@@ -41,6 +42,7 @@ export function Stepper({ steps, currentStep }: StepperProps) {
               </div>
             </div>
 
+            {/* Connector line to the next step, TODO: change for png image given in assignment */}
             {index < steps.length - 1 && (
               <div
                 className={[styles.line, index < currentIndex ? styles.lineCompleted : '']

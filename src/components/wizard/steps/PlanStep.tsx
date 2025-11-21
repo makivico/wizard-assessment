@@ -7,13 +7,15 @@ import styles from './PlanStep.module.scss';
 export function PlanStep() {
   const { state, dispatch } = useWizard();
 
+  // Ensure selected plan is valid for the current account type
   useEffect(() => {
     const acct = getSelectedAccount(state);
     const valid = acct?.plan.some(p => p.id === state.selectedPlanId);
+
     if (!valid && state.selectedPlanId !== null) {
       dispatch({ type: 'SET_ACCOUNT_TYPE', id: state.selectedAccountTypeId! });
     }
-  }, [state.selectedAccountTypeId]);
+  }, [state, dispatch]);
 
   const selectedAccount = state.accountTypes.find(
     acc => acc.id === state.selectedAccountTypeId
@@ -32,6 +34,7 @@ export function PlanStep() {
   return (
     <div className={styles.container}>
       <div className={styles.options}>
+        {/* Render a button for each plan */}
         {selectedAccount.plan.map(plan => (
           <Button
             key={plan.id}

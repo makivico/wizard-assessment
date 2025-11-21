@@ -1,3 +1,4 @@
+// All wizard step identifiers
 export type StepId = 'account' | 'plan' | 'addPlan' | 'info';
 
 export interface PlanConfig {
@@ -32,6 +33,7 @@ export interface InfoFormState {
   description: string;
 }
 
+// Initial state when wizard loads
 export interface WizardState {
   step: StepId;
   isAddingNewPlan: boolean;

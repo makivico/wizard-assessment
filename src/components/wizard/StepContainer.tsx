@@ -31,8 +31,10 @@ export function StepContainer({
       <h2 className={styles.title}>{stepConfig.title}</h2>
       {stepConfig.subtitle && <p className={styles.subtitle}>{stepConfig.subtitle}</p>}
 
+      {/* Main step content */}
       <div className={styles.content}>{children}</div>
 
+      {/* Navigation buttons */}
       <div className={styles.footer}>
         {showBack && onBack && (
           <Button variant="ghost" onClick={onBack} disabled={isBackDisabled}>

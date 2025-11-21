@@ -4,7 +4,9 @@ import { FormField } from '../../ui/FormField';
 import { FormTextArea } from '../../ui/FormTextArea';
 import styles from './InfoStep.module.scss';
 import { requiresExtraInfo } from '../../../utils/wizardUtils';
+import { validateInfoSoftFields } from '../../../utils/infoValidation';
 
+// Collecting user info, with validation for required and optional fields
 export function InfoStep() {
   const { state, dispatch } = useWizard();
 
@@ -18,11 +20,15 @@ export function InfoStep() {
       });
     };
 
+  // Validation for required fields
   const descriptionRequired = requiresExtraInfo(state);
-  const firstNameMissing = state.info.firstName.trim().length === 0;
-  const lastNameMissing = state.info.lastName.trim().length === 0;
   const descriptionMissing =
     descriptionRequired && state.info.description.trim().length === 0;
+  const firstNameMissing = state.info.firstName.trim().length === 0;
+  const lastNameMissing = state.info.lastName.trim().length === 0;
+
+  // Validation for optional fields (age, email, startDate)
+  const softErrors = validateInfoSoftFields(state.info);
 
   return (
     <div className={styles.container}>
@@ -45,11 +51,12 @@ export function InfoStep() {
       />
 
       <FormField
-        type="text"
+        type="number"
         label="Age:"
         value={state.info.age}
         placeholder="Age"
         onChange={handleChange('age')}
+        error={softErrors.age}
       />
 
       <FormField
@@ -58,6 +65,7 @@ export function InfoStep() {
         value={state.info.email}
         placeholder="Email"
         onChange={handleChange('email')}
+        error={softErrors.email}
       />
 
       <FormField
@@ -65,6 +73,7 @@ export function InfoStep() {
         label="Start date:"
         value={state.info.startDate}
         onChange={handleChange('startDate')}
+        error={softErrors.startDate}
       />
 
       <FormField
@@ -81,6 +90,7 @@ export function InfoStep() {
         onChange={handleChange('language')}
       />
 
+      {/* Description, required for some plans */}
       <FormTextArea
         label="Description:"
         value={state.info.description}

@@ -6,6 +6,7 @@ import styles from './AccountStep.module.scss';
 export function AccountStep() {
   const { state, dispatch } = useWizard();
 
+  // Handler for selecting an account type
   const handleSelect = (account: AccountTypeConfig) => {
     dispatch({ type: 'SET_ACCOUNT_TYPE', id: account.id });
   };
@@ -13,6 +14,7 @@ export function AccountStep() {
   return (
     <div className={styles.container}>
       <div className={styles.options}>
+        {/* Render a button for each account type */}
         {state.accountTypes.map(account => {
           const isSelected = state.selectedAccountTypeId === account.id;
 
