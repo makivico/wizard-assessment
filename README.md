@@ -1,25 +1,26 @@
 Wizard Assessment
 
-This project implements a multi-step User Creation Wizard based on the provided assessment pdf specification.
+A multi-step wizard application built with React, TypeScript, and Vitest for account selection, plan management, and user information collection.
 
-Tech stack:
-
+**Tech stack:**
 - React 18
 - TypeScript
 - Vite
 - SCSS Modules
 - Context + Reducer for state managment
 
-Run the project:
+# Install dependencies
 npm install
+
+# Run development server
 npm run dev
 
-Structure:
-src/
-components/
-ui/
-wizard/
-config/
-context/
-data/
-types/
+# Run tests
+npm run test
+
+# Run linter
+npm run lint
+
+# Build for production
+npm run build
+
